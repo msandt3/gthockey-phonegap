@@ -6,14 +6,15 @@
         id        = "com.phonegap.hello-world"
         version   = "1.0.0">
 
-    <name>Hello World</name>
+    <name>GT Hockey Mobile</name>
 
     <description>
-        Hello World sample application that responds to the deviceready event.
+        An application for vieiwing schedule, roster and contact info about the 
+        Georgia Tech Ice Hockey Team
     </description>
 
-    <author href="http://phonegap.com" email="support@phonegap.com">
-        PhoneGap Team
+    <author href="http://github.com/msandt3" email="michael.sandt@gmail.com">
+        Mike Sandt
     </author>
 
     <!--
