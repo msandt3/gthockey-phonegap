@@ -34,24 +34,6 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
-
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'https://api.github.com/legacy/repos/search/javascript', true);
-
-        // Response handlers.
-        xhr.onload = function () {
-            var repos = JSON.parse(xhr.response), i, reposHTML = "";
-            for (i = 0; i < repos.repositories.length; i++) {
-                reposHTML += "<p><a href='https://github.com/" + repos.repositories[i].username + "/" + repos.repositories[i].name + "'>" + repos.repositories[i].name + "</a><br>" + repos.repositories[i].description + "</p>";
-            }
-            document.getElementById("allRepos").innerHTML = reposHTML;
-        };
-
-        xhr.onerror = function () {
-            alert('error making the request.');        
-        };
-
-        xhr.send();
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -63,5 +45,13 @@ var app = {
         receivedElement.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
+    },
+    deviceready : function(){
+        $.ajax("https://api.github.com/legacy/repos/search/javascript").done(function(data) {
+         var i, repo;
+         $.each(data.repositories, function (i, repo) {
+            $("#allRepos").append("<p><a href='https://github.com/" + repo.username + "/" + repo.name + "'>" + repo.name + "</a><br>"+ repo.description + "&g\lt;/p>");
+        });
+});
     }
 };
