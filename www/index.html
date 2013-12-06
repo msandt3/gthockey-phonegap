@@ -22,7 +22,7 @@
         <meta charset="utf-8" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <!-- <link rel="stylesheet" type="text/css" href="css/index.css" /> -->
         <link rel="stylesheet" href="css/gthockey.css" />
         <link rel="stylesheet" href="css/custom.css"/>
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile.structure-1.3.2.css" />
@@ -186,9 +186,97 @@
             </div>
         </div>
 
+
+        <!-- Templates -->
+        <script type="text/template" id="schedule-template">
+            <table data-role="content" class="center-table" id="schedule-table" class="table-stroke">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Opponent</th>
+                        <th>GT</th>
+                        <th>Opp</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% _.each(games, function(game){ %>
+                        <tr id='schedule-row'>
+                            <td><%= game.get('date') %></td>
+                            <td><%= game.get('time') %></td>
+                            <td><%= game.get('home') == 1 ? game.get('opponent') : "@"+game.get('opponent') %></td>
+                            <td><%= game.get('gtf') %></td>
+                            <td><%= game.get('opponentf') %></td>
+                            <td><a href=<%- "#game/"+game.get('gameid') %> data-role="button" data-icon="info2"></a></td>
+                        </tr>
+                    <% }); %> 
+                </tbody>
+            </table>
+        </script>
+        <script type="text/template" id="roster-template">
+            <table data-role="content" class="center-table" id="roster-table" class="table-stroke">
+                <thead>
+                    <tr>
+                        <th>Number</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                    <% _.each(players, function(player){ %>
+                        <tr>
+                            <td><%= player.get('number') %></td>
+                            <td><%= player.get('name') %></td>
+                            <td><%= player.get('position') %></td>
+                            <td><a href=<%- "#player/"+player.get('playerid') %> data-role="button" data-icon="info2"></a></td>
+                        </tr>
+                    <% }); %> 
+                </tbody>
+            </table>
+        </script>
+
+        <script type="text/template" id="player-template">
+            <div class="ui-grid-solo">
+                <div class="ui-block-a">
+                    <img id="player-img" src="http://www.gthockey.com/photos/mugs/2013-2014/<%= player.attributes[0]['photo'] %>">
+                </div>
+            </div>
+            <div class="ui-grid-solo">
+                <div class="ui-block-a" id="player-info-block">
+                    <h4>Name: <%= player ? player.attributes[0]['name'] : '' %></h4>
+                    <h4>Number: <%= player ? player.attributes[0]['number'] : '' %></h4>
+                    <h4>Height: <%= player ? player.attributes[0]['height'] : '' %></h4>
+                    <h4>Weight: <%= player ? player.attributes[0]['weight'] : '' %></h4>
+                    <h4>Year: <%= player ? player.attributes[0]['year'] : '' %></h4>
+                    <h4>Shot: <%= player ? player.attributes[0]['shot'] : '' %></h4>
+                    <h4>Hometown: <%= player ? player.attributes[0]['hometown'] : '' %></h4>
+                </div>
+            </div>
+        </script>
+
+        <script type="text/template" id="game-template">
+            <div id="game-img-block" class="ui-grid-b">
+                <div class="ui-block-a">
+                    <img id="team-logo" src=<%= game.attributes[0]['home'] == 0 ? "http://www.gthockey.com/photos/logos/thumbs/gt.png" : "http://www.gthockey.com/photos/logos/thumbs/"+game.attributes[0]['teamlogo'] %>>
+                </div>
+                <div class="ui-block-b"><h4>v.</h4></div>
+                <div class="ui-block-c">
+                    <img id="team-logo" src=<%= game.attributes[0]['home'] == 1 ? "http://www.gthockey.com/photos/logos/thumbs/gt.png" : "http://www.gthockey.com/photos/logos/thumbs/"+game.attributes[0]['teamlogo'] %>></div>
+            </div>
+            <div id="game-info-block" class="ui-grid-solo">
+                <h4>DATE: <%= game.attributes[0]['date'] %></h4>
+                <h4>TIME: <%= game.attributes[0]['time'] %></h4>
+                <h4>LOCATION: <%= game.attributes[0]['location'] %></h4>
+                <h4>Result: <%= game.attributes[0]['home'] == 1 ? game.attributes[0]['opponentf']+"-"+game.attributes[0]['gtf'] : game.attributes[0]['gtf']+"-"+game.attributes[0]['opponentf'] %></h4>
+            </div>
+        </script>
+
         <script type="text/javascript" src="phonegap.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
-
+        <!-- JS INCLUDES -->
         <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.3.2/jquery.mobile.js"></script>
         
@@ -197,6 +285,201 @@
         <script src="phonegap.js"></script>
         <script type="text/javascript">
             app.initialize();
+        </script>
+
+
+        <!-- BACKBONE -->
+        <script type="text/javascript">
+            // Prevents all anchor click handling
+            $.mobile.linkBindingEnabled = false;
+
+            // Disabling this will prevent jQuery Mobile from handling hash changes
+            $.mobile.hashListeningEnabled = false;
+
+            //AJAX PREFILTER
+            $.ajaxPrefilter(function(options, originalOptions, jqXHR){
+                options.url = "http://www.gthockey.com/api" + options.url;
+            });
+            //Collections & Models
+            var Game = Backbone.Model.extend({
+                urlRoot: '/schedule.php'
+            });
+
+            var Player = Backbone.Model.extend({
+                urlRoot: '/roster.php'
+            });
+            var Games = Backbone.Collection.extend({
+                url: '/schedule.php'
+            });
+
+            var Players = Backbone.Collection.extend({
+                url: '/roster.php'
+            });
+
+            var PlayerData = Backbone.View.extend({
+                el: "#player-content",
+                render: function(options){
+                    var that = this;
+                    
+                    if(options.id){
+                        var player = new Player();
+                        player.fetch({ 
+                            data: $.param({ playerid: options.id}),
+                            beforeSend: function(){
+                                $(".ui-loader").css('display','block');
+                            },
+                            success: function(player){
+                                $(".ui-loader").css('display','none');
+                                var template = _.template($('#player-template').html(), {player: player});
+                                that.$el.html(template);
+                                console.log(player);
+                            }
+                        });
+                    }
+                    else{
+                        var template = _.template($('#player-template').html(), {player: null});
+                        that.$el.html(template);
+                    }
+                }
+            });
+
+            var GameData = Backbone.View.extend({
+                el: "#game-content",
+                render: function(options){
+                    var that = this;
+                    if(options.id){
+                        var game = new Game();
+                        game.fetch({
+                            data: $.param({ gameid: options.id}),
+                            beforeSend: function(){
+                                $(".ui-loader").css('display','block');
+                            },
+                            success: function(game){
+                                $(".ui-loader").css('display','none');
+                                var template = _.template($('#game-template').html(), {game: game});
+                                that.$el.html(template);
+                                console.log(game);
+                            }
+                        });
+                    }
+                }
+            });
+
+            //Views
+            var Schedule = Backbone.View.extend({
+                el: '#schedule-content',
+                render: function(){
+                    var that = this;
+                    var games = new Games();
+                    games.fetch({
+                        beforeSend: function(){
+                            $(".ui-loader").css('display','block');
+                        },
+                        success: function(games){
+                            console.log(games);
+                            $(".ui-loader").css('display','none');
+                            var template = _.template($('#schedule-template').html(), {games:games.models});
+                            that.$el.html(template);
+                            $('#schedule-table a[data-role=button]').button();
+                        }
+                    });
+
+                }
+            });
+
+            var Roster = Backbone.View.extend({
+                el: '#roster-content',
+                render: function(){
+                    var that = this;
+                    var players = new Players();
+                    players.fetch({
+                        beforeSend: function(){
+                            $(".ui-loader").css('display','block');
+                        },
+                        success: function(players){
+                            //set up template
+                            $(".ui-loader").css('display','none');
+                            var template =  _.template($('#roster-template').html(), {players:players.models});
+                            that.$el.html(template);
+                            $('#roster-table a[data-role=button]').button();
+                        }
+                    });
+                    
+                }
+            });
+
+            
+
+
+
+
+            //Router
+            var Router = Backbone.Router.extend({
+                routes: {
+                    '': 'home',
+                    'schedule': 'schedule',
+                    'roster': 'roster',
+                    'game/:id': 'showGame',
+                    'player/:id': 'showPlayer',
+                    'contact': 'contact',
+                    'about': 'about'
+                }
+            });
+
+
+
+            //Declarations 
+            var router = new Router();
+            var scheduleView = new Schedule();
+            var rosterView = new Roster();
+            var playerView = new PlayerData();
+            var gameView = new GameData();
+
+
+
+            //Event Handling
+            router.on('route:home',function(){
+                $.mobile.changePage("#home",{reverse:true});
+            }); 
+
+            router.on('route:schedule',function(){
+                scheduleView.render();
+
+                $.mobile.changePage("#schedule",{reverse: true});
+
+                $('#schedule').trigger('create');
+            });
+
+            router.on('route:roster',function(){
+                rosterView.render();
+                $.mobile.changePage("#roster",{reverse:true});
+                $("#roster").trigger('create');
+            });
+
+            router.on('route:showGame',function(id){
+                gameView.render({id:id});
+                $.mobile.changePage("#game");
+                console.log("SHOW GAME INFO FOR GAME "+id);
+            });
+
+            router.on('route:showPlayer',function(id){
+                playerView.render({id:id});
+                $.mobile.changePage("#player");
+                console.log("SHOW PLAYER INFO FOR PLAYER "+id);
+            });
+
+            router.on('route:contact',function(){
+                $.mobile.changePage("#contact");
+                $("#contact").trigger('create');
+            });
+
+            router.on('route:about',function(){
+                $.mobile.changePage("#about");
+                $("#about").trigger('create');
+            });
+
+            Backbone.history.start();
+
         </script>
     </body>
 </html>
