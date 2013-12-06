@@ -1,0 +1,72 @@
+.center-table{
+	margin:0 auto;
+}
+
+.center-table td,
+.center-table th{
+	text-align: center;
+}
+.center-table > td{
+	text-align: center;
+}
+
+#player-img{
+	margin: 0 auto;
+	display: block;
+	width: 75%;
+}
+
+#player-info-block{
+	text-align: center;
+}
+
+#gt-logo{
+	margin:0 auto;
+	display: block;
+	width: 75%;
+}
+
+#team-logo{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#game-img-block{
+	text-align: center;
+}
+
+#game-info-block{
+	text-align: center;
+}
+
+
+/*
+Make the Facebook Like box responsive (fluid width)
+https://developers.facebook.com/docs/reference/plugins/like-box/
+*/
+ 
+/* This element holds injected scripts inside iframes that in some cases may stretch layouts. So, we're just hiding it. */
+#fb-root {
+  /*display: none;*/
+}
+ 
+/* To fill the container and nothing else */
+.fb_iframe_widget, .fb_iframe_widget span, .fb_iframe_widget span iframe[style] {
+  width: 100% !important;
+}
+#twitter-widget-0{
+	width: 100% !important;
+	height: 300px;
+}
+
+#schedule-row td{
+	padding-top:10px;
+}
+
+thead th {
+  border-bottom: 1px solid rgba(0, 0, 0, .3);
+}
+tbody th, tbody td {
+  border-bottom: 1px solid rgba(0, 0, 0, .15);
+}
