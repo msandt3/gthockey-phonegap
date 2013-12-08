@@ -1,50 +1,27 @@
-# PhoneGap Build Starter Application
+# GT Hockey Mobile Application
 
-> A Hello World application to get started with PhoneGap Build.
+> This is the first prototype version of the GT Hockey Mobile Applicaiton. Built with Backbone.js
+and jQuery Mobile, it provides a convenient mobile ready front end for a REST API hosted on
+the GT Hockey server. 
 
 ## Usage
 
-### Run Application
+### Clone the Repo
 
-    /www/index.html
+	git clone https://github.com/msandt3/gthockey-phonegap.git
 
-### Run Tests
+### Serve assets from web server
 
-    /www/spec.html
+	$ cd gthockey-phonegap/www
+	$ python -m SimpleHTTPServer
 
-### PhoneGap/Build
+You can view the application by viewing localhost:8000 in your browser. 
 
-Create a new app with the following repository:
+## Contributing
 
-    https://github.com/phonegap/phonegap-start.git
+If you would like to contribute to this project, please fork https://github.com/msandt3/gthockey-mobile
+and submit pull requests to that repo. All changes will be reflected on the mobile application once
+sufficient progress has been achieved. 
 
-## Updating the Application
 
-The application is based on the [Apache Cordova Hello World][cordova-app] app.
-
-### 1. Update the Source
-
-    cp cordova-app-hello-world/www www/
-
-__Do not replace `www/config.xml`.__
-
-__Do not replace `www/img/logo.png`.__
-
-### 2. Update index.html
-
-Replace `<h1>Apache Cordova</h1>` with `<h1>PhoneGap</h1>`.
-
-### 3. Update PhoneGap Version
-
-    <preference name="phonegap-version" value="x.x.x" />
-
-### 4. Commit
-
-    $ git commit -am "Version x.x.x"
-
-### 5. Tag
-
-    $ git tag x.x.x
-
-[cordova-app]: http://github.com/apache/cordova-app-hello-world
 
