@@ -38,6 +38,7 @@
                 <ul id="team-list" data-role="listview" data-inset="true">
                     <li><a id="schedule-link" href="#schedule">Schedule</a></li>
                     <li><a id="roster-link" href="#roster">Roster</a></li>
+                    <li><a id="stats-link" href="#stats">Statistics</a></li>
                 </ul>
                 <ul id="contact-list" data-role="listview" data-inset="true">
                     <li><a id="about-link" href="#about">About</a></li>
@@ -76,12 +77,12 @@
 
 
         <!-- We'll see how this fleshes out -->
-        <div id="statistics" data-role="page" data-theme="a" data-add-back-btn="true">
+        <div id="stats" data-role="page" data-theme="a" data-add-back-btn="true">
             <div data-role="header" data-position="inline">
                 <a href="#" data-rel="back" data-icon="arrow-l">Back</a>
                 <h1>Statistics</h1>
             </div>
-            <div data-role="content" data-theme="a">
+            <div data-role="content" data-theme="a" id="stats-content">
             </div>
             <div data-role="footer" data-position="fixed" data-theme="a">
                 <h2> </h2>
@@ -200,7 +201,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                </tbody>
                     <% _.each(players, function(player){ %>
                         <tr>
                             <td><%= player.get('number') %></td>
@@ -209,6 +209,40 @@
                             <td><a href=<%- "#player/"+player.get('playerid') %> data-role="button" data-icon="info2"></a></td>
                         </tr>
                     <% }); %> 
+                </tbody>
+            </table>
+        </script>
+        <script type="text/template" id="stats-template">
+            <table data-role="content" class="center-table" id="stats-table" class="table-stroke">
+                <thead>
+                    <tr>
+                        <th>Number</th>
+                        <th>Name</th>
+                        <th>GP</th>
+                        <th>G</th>
+                        <th>A</th>
+                        <th>P</th>
+                        <th>PIMS</th>
+                        <th>PPG</th>
+                        <th>SHG</th>
+                        <th>GWG</th>
+                    <tr>
+                </thead>
+                <tbody>
+                    <% _.each(rows, function(row){ %>
+                        <tr>
+                            <td><%= row.get('number') %></td>
+                            <td><%= row.get('name') %></td>
+                            <td><%= row.get('gamesplayed') %></td>
+                            <td><%= row.get('goals') %></td>
+                            <td><%= row.get('assists') %></td>
+                            <td><%= row.get('points') %></td>
+                            <td><%= row.get('pims') %></td>
+                            <td><%= row.get('power_play_goals') %></td>
+                            <td><%= row.get('short_handed_goals') %></td>
+                            <td><%= row.get('gwg') %></td>
+                        </tr>
+                    <% }); %>
                 </tbody>
             </table>
         </script>
@@ -275,6 +309,9 @@
             $.ajaxPrefilter(function(options, originalOptions, jqXHR){
                 options.url = "http://www.gthockey.com/api" + options.url;
             });
+
+
+
             //Collections & Models
             var Game = Backbone.Model.extend({
                 urlRoot: '/schedule.php'
@@ -289,6 +326,10 @@
 
             var Players = Backbone.Collection.extend({
                 url: '/roster.php'
+            });
+
+            var Stats = Backbone.Collection.extend({
+                url: '/stats.php'
             });
 
             var PlayerData = Backbone.View.extend({
@@ -383,6 +424,26 @@
                 }
             });
 
+            var StatsView = Backbone.View.extend({
+                el: '#stats-content',
+                render: function(){
+                    var that = this;
+                    var stats = new Stats();
+                    stats.fetch({
+                        beforeSend: function(){
+                            $(".ui-loader").css('display','block');
+                        },
+                        success: function(rows){
+                            //set up template
+                            $(".ui-loader").css('display','none');
+                            var template =  _.template($('#stats-template').html(), {rows:rows.models});
+                            that.$el.html(template);
+                            $('#stats-table a[data-role=button]').button();
+                        }
+                    });
+                }
+            });
+
             
 
 
@@ -394,6 +455,7 @@
                     '': 'home',
                     'schedule': 'schedule',
                     'roster': 'roster',
+                    'stats': 'stats',
                     'game/:id': 'showGame',
                     'player/:id': 'showPlayer',
                     'contact': 'contact',
@@ -409,6 +471,7 @@
             var rosterView = new Roster();
             var playerView = new PlayerData();
             var gameView = new GameData();
+            var statsView = new StatsView();
 
 
 
@@ -429,6 +492,12 @@
                 rosterView.render();
                 $.mobile.changePage("#roster",{reverse:true});
                 $("#roster").trigger('create');
+            });
+
+            router.on('route:stats',function(){
+                statsView.render();
+                $.mobile.changePage("#stats",{reverse:true});
+                $("#stats").trigger('create');
             });
 
             router.on('route:showGame',function(id){
