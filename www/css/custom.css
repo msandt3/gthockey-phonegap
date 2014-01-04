@@ -1,14 +1,15 @@
 .center-table{
-	margin:0 auto;
+	width: 100%;
 }
 
-.center-table td,
+/*.center-table td,
 .center-table th{
 	text-align: center;
 }
 .center-table > td{
 	text-align: center;
-}
+}*/
+
 
 #player-img{
 	margin: 0 auto;
@@ -44,7 +45,7 @@
 /*
 Make the Facebook Like box responsive (fluid width)
 https://developers.facebook.com/docs/reference/plugins/like-box/
-*/
+
  
 /* This element holds injected scripts inside iframes that in some cases may stretch layouts. So, we're just hiding it. */
 #fb-root {
@@ -64,9 +65,67 @@ https://developers.facebook.com/docs/reference/plugins/like-box/
 	padding-top:10px;
 }
 
-thead th {
+/*thead th {
   border-bottom: 1px solid rgba(0, 0, 0, .3);
 }
 tbody th, tbody td {
   border-bottom: 1px solid rgba(0, 0, 0, .15);
-}
+}*/
+
+
+@media only screen and (max-width: 480px){
+	
+	/* Force table to not be like tables anymore */
+	#stats-table table, 
+	#stats-table thead,
+	#stats-table tbody,
+	#stats-table th, 
+	#stats-table td, 
+	#stats-table tr { 
+		display: block; 
+	}
+
+	#stats-table thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	#stats-table tr { 
+		border: 1px solid #ccc;
+		text-align: center; 
+	}
+	
+	#stats-table td { 
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 50%; 
+	}
+
+	#stats-table td:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+	}
+	
+	/*
+	Label the data
+	*/
+	#stats-table td:nth-of-type(1):before { content: "Number"; }
+	#stats-table td:nth-of-type(2):before { content: "Name"; }
+	#stats-table td:nth-of-type(3):before { content: "GP"; }
+	#stats-table td:nth-of-type(4):before { content: "G"; }
+	#stats-table td:nth-of-type(5):before { content: "A"; }
+	#stats-table td:nth-of-type(6):before { content: "P"; }
+	#stats-table td:nth-of-type(7):before { content: "PIMS"; }
+	#stats-table td:nth-of-type(8):before { content: "PPG"; }
+	#stats-table td:nth-of-type(9):before { content: "SHG"; }
+	#stats-table td:nth-of-type(10):before { content: "GWG"; }
+} 

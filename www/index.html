@@ -82,7 +82,7 @@
                 <a href="#" data-rel="back" data-icon="arrow-l">Back</a>
                 <h1>Statistics</h1>
             </div>
-            <div data-role="content" data-theme="a" id="stats-content">
+            <div data-role="content" data-theme="a" id="stats-content" role="main">
             </div>
             <div data-role="footer" data-position="fixed" data-theme="a">
                 <h2> </h2>
@@ -165,7 +165,7 @@
 
         <!-- Templates -->
         <script type="text/template" id="schedule-template">
-            <table data-role="content" class="center-table" id="schedule-table" class="table-stroke">
+            <table data-role="content" class="table-responsive center-table table-stripe" id="schedule-table">
                 <thead>
                     <tr>
                         <th>Date</th>
@@ -191,7 +191,7 @@
             </table>
         </script>
         <script type="text/template" id="roster-template">
-            <table data-role="content" class="center-table" id="roster-table" class="table-stroke">
+            <table data-role="content" class="center-table table-stripe" id="roster-table">
                 <thead>
                     <tr>
                         <th>Number</th>
@@ -213,7 +213,7 @@
             </table>
         </script>
         <script type="text/template" id="stats-template">
-            <table data-role="content" class="center-table" id="stats-table" class="table-stroke">
+            <table data-role="table" id="stats-table" data-role="reflow" class="center-table table-stripe">
                 <thead>
                     <tr>
                         <th>Number</th>
@@ -226,21 +226,21 @@
                         <th>PPG</th>
                         <th>SHG</th>
                         <th>GWG</th>
-                    <tr>
+                    </tr>
                 </thead>
                 <tbody>
                     <% _.each(rows, function(row){ %>
                         <tr>
-                            <td><%= row.get('number') %></td>
-                            <td><%= row.get('name') %></td>
-                            <td><%= row.get('gamesplayed') %></td>
-                            <td><%= row.get('goals') %></td>
-                            <td><%= row.get('assists') %></td>
-                            <td><%= row.get('points') %></td>
-                            <td><%= row.get('pims') %></td>
-                            <td><%= row.get('power_play_goals') %></td>
-                            <td><%= row.get('short_handed_goals') %></td>
-                            <td><%= row.get('gwg') %></td>
+                            <td><%= row.get('number') != null ? row.get('number') : 'N/A' %></td>
+                            <td><%= row.get('name') != null ? row.get('name') : 'N/A' %></td>
+                            <td><%= row.get('gamesplayed') != null ? row.get('gamesplayed') : '0' %></td>
+                            <td><%= row.get('goals') != null ? row.get('goals') : '0' %></td>
+                            <td><%= row.get('assists') != null ? row.get('assists') : '0' %></td>
+                            <td><%= row.get('points') != null ? row.get('points') : '0' %></td>
+                            <td><%= row.get('pims') != null ? row.get('pims') : '0' %></td>
+                            <td><%= row.get('power_play_goals') != null ? row.get('power_play_goals') : '0' %></td>
+                            <td><%= row.get('short_handed_goals') != null ? row.get('short_handed_goals') : '0' %></td>
+                            <td><%= row.get('gwg') != null ? row.get('gwg') : '0' %></td>
                         </tr>
                     <% }); %>
                 </tbody>
@@ -434,11 +434,13 @@
                             $(".ui-loader").css('display','block');
                         },
                         success: function(rows){
+                            console.log(rows);
                             //set up template
                             $(".ui-loader").css('display','none');
                             var template =  _.template($('#stats-template').html(), {rows:rows.models});
                             that.$el.html(template);
                             $('#stats-table a[data-role=button]').button();
+                            // $('#stats-table').create();
                         }
                     });
                 }
